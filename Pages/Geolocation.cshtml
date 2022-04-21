@@ -1,0 +1,28 @@
+﻿@page "/geolocation"
+@*@model HighFive.Pages.GeolocationModel*@
+@*@inherits HighFive.Pages.GeolocationModel*@
+@using HighFive.Pages
+@inject GeolocationModel GeoModel
+
+<h1>Geolocation</h1>
+
+<div class="my-3">
+    <h3>Current Position</h3>
+    <p class="my-0"><span class="font-weight-bold">Position </span> 
+        @if(GeoModel.CurrentPositionResult?.Position is null)
+        {
+            <span>[unknown]</span>
+        }
+        else
+        {
+            <span>Lat: @GeoModel.CurrentLatitude °, Long: @GeoModel.CurrentLongitude °</span>
+        }
+    </p>
+    @*<button class="btn btn-primary my-3" onclick="@GeoModel.ShowCurrentPosition">Current Location</button>*@
+    @if (GeoModel.CurrentPositionResult?.Error != null)
+    {
+        <p class="bg-light text-danger">Error: @GeoModel.CurrentPositionResult.Error.Message</p>
+    }
+    <LeafletMap Map="PositionMap" TileLayer="PositionTileLayer" />
+</div>
+
