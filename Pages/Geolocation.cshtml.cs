@@ -11,7 +11,7 @@ namespace HighFive.Pages
 {
     public class GeolocationModel : ComponentBase, IDisposable
     {
-        [Inject] 
+        [Inject]
         public IGeolocationService GeolocationService { get; set; }
         public GeolocationResult CurrentPositionResult { get; set; }
         public string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString("F2");
