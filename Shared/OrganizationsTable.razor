@@ -1,0 +1,40 @@
+﻿@using HighFive.Data;
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <td>Наименование</td>
+                <td>Адрес</td>
+                <td>URL</td>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Organizations == null)
+            {
+                <tr>Загружаем данные...</tr>
+            }
+            else if (Organizations.Count == 0)
+            {
+                <tr>Нет данных для отображения...</tr>
+            }
+            else
+            {
+                @foreach(var org in Organizations)
+                {
+                <tr>
+                    <td>@org.name</td>
+                    <td>@org.address</td>
+                    <td>@org.url</td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+    @code {
+    [Parameter]
+    public List<OrganizationInfo> Organizations { get; set; }
+}
