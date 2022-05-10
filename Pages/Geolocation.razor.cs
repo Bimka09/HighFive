@@ -7,14 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net;
-using System.IO;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 using System.Xml;
 using HighFive.Data;
 using Newtonsoft.Json;
-using System.Text.Json;
+using Fluxor;
 
 //https://api.2gis.ru/doc/maps/ru/quickstart/
 //https://geocode-maps.yandex.ru/1.x/?apikey=ab4445ef-d950-4bfe-85a3-c44aa3c6ecdc&geocode=37.597576,55.771899
@@ -25,13 +22,16 @@ using System.Text.Json;
 
 namespace HighFive.Pages
 {
+    [FeatureState]
     public class GeolocationBase : ComponentBase, IDisposable
     {
+        private readonly string _apiOrgSearch = "7b8614d5-54f5-44d6-ad37-032404b0c2d6";
+        private readonly string _apiGeoCode = "ab4445ef-d950-4bfe-85a3-c44aa3c6ecdc";
         [Inject] public IGeolocationService GeolocationService { get; set; }
 
         protected Map PositionMap;
         protected TileLayer PositionTileLayer;
-        Marker CurrentPositionMarker;
+        //Marker CurrentPositionMarker;
 
         protected Map WatchMap;
         protected TileLayer WatchTileLayer;
@@ -39,10 +39,9 @@ namespace HighFive.Pages
         protected List<Marker> WatchMarkers;
 
         protected GeolocationResult CurrentPositionResult { get; set; }
-        protected string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString("F2");
-        protected string CurrentLongitude => CurrentPositionResult?.Position?.Coords?.Longitude.ToString("F2");
+        protected string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString().Replace(",","."); //ToString("F2")
+        protected string CurrentLongitude => CurrentPositionResult?.Position?.Coords?.Longitude.ToString().Replace(",",".");
         protected bool ShowCurrentPositionError => CurrentPositionResult?.Error != null;
-
         private bool isWatching => WatchHandlerId.HasValue;
         protected long? WatchHandlerId { get; set; }
         protected GeolocationResult LastWatchPositionResult { get; set; }
@@ -51,6 +50,9 @@ namespace HighFive.Pages
         protected string LastWatchTimestamp => LastWatchPositionResult?.Position?.DateTimeOffset.ToString();
         protected string ToggleWatchCommand => isWatching ? "Stop watching" : "Start watching";
         public List<OrganizationInfo> foundOrganizations { get; set; }
+        public string adressToSearch { get; set; }
+        public string currentAdress { get; set; }
+
 
         public GeolocationBase() : base()
         {
@@ -82,11 +84,10 @@ namespace HighFive.Pages
                 }
             );
         }
-
-        public async void GetRoute()
+        public async void GetOrganizations()
         {
             foundOrganizations.Clear();
-            var url = @"https://search-maps.yandex.ru/v1/?text=%D0%90%D0%B2%D1%82%D0%BE%D0%BC%D0%BE%D0%B9%D0%BA%D0%B0&type=biz&lang=ru_RU&apikey=7b8614d5-54f5-44d6-ad37-032404b0c2d6";
+            var url = @"https://search-maps.yandex.ru/v1/?text=" + adressToSearch + "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch;
             using var client = new HttpClient();
             var result = await client.GetStringAsync(url);
 
@@ -105,15 +106,38 @@ namespace HighFive.Pages
                 StateHasChanged();
             }
         }
-        public void GetRouteXML()
+        private async void GetCurrentPlaceOrganizations()
+        {
+            foundOrganizations.Clear();
+            var url = @"https://search-maps.yandex.ru/v1/?text=" + CurrentLongitude + "," + CurrentLatitude + "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch;
+            using var client = new HttpClient();
+            var result = await client.GetStringAsync(url);
+
+            JObject obj = JObject.Parse(result);
+            var features = obj["features"].Children();
+            foreach (var feature in features)
+            {
+                OrganizationInfo organization = JsonConvert.DeserializeObject<OrganizationInfo>(feature["properties"]["CompanyMetaData"].ToString());
+                foundOrganizations.Add(new OrganizationInfo
+                {
+                    address = organization.address,
+                    name = organization.name,
+                    url = organization.url
+                });
+                Console.WriteLine(organization.address);
+                StateHasChanged();
+            }
+        }
+        private void GetAdress()
         {
             var palceInfo = new PlaceInfo();
-            string url = @"https://geocode-maps.yandex.ru/1.x/?apikey=ab4445ef-d950-4bfe-85a3-c44aa3c6ecdc&geocode=37.597576,55.771899";
+            string url = @"https://geocode-maps.yandex.ru/1.x/?apikey=" + _apiGeoCode + "&geocode=" + CurrentLongitude + "," + CurrentLatitude;
             XmlDocument xDoc = new XmlDocument();
             xDoc.Load(url);
             XmlElement? xRoot = xDoc.DocumentElement;
             if (xRoot != null)
             {
+                currentAdress = xRoot.ChildNodes[0].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
                 var adressInfo = xRoot.ChildNodes[0].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[3];
                 foreach(XmlNode childnode in adressInfo.ChildNodes)
                 {
@@ -121,7 +145,6 @@ namespace HighFive.Pages
                 }
             }
         }
-
         private PlaceInfo AnalyzeXMLPlaceInfo(XmlNode childnode, PlaceInfo placeInfo)
         {
             if (childnode.Name == "country_code")
@@ -157,24 +180,24 @@ namespace HighFive.Pages
             }
             return placeInfo;
         }
-
         public async void ShowCurrentPosition()
         {
-            if (CurrentPositionMarker != null)
+            /*if (CurrentPositionMarker != null)
             {
                 await CurrentPositionMarker.Remove();
-            }
+            }*/
             CurrentPositionResult = await GeolocationService.GetCurrentPosition();
-            if (CurrentPositionResult.IsSuccess)
+            GetCurrentPlaceOrganizations();
+            GetAdress();
+            /*if (CurrentPositionResult.IsSuccess)
             {
-                CurrentPositionMarker = new Darnton.Blazor.Leaflet.LeafletMap.Marker(
+                CurrentPositionMarker = new Marker(
                         CurrentPositionResult.Position.ToLeafletLatLng(), null
                     );
                 await CurrentPositionMarker.AddTo(PositionMap);
-            }
+            }*/
             StateHasChanged();
         }
-
         public async void TogglePositionWatch()
         {
             if (isWatching)
@@ -196,13 +219,11 @@ namespace HighFive.Pages
             }
             StateHasChanged();
         }
-
         private async Task StopWatching()
         {
             GeolocationService.WatchPositionReceived -= HandleWatchPositionReceived;
             await GeolocationService.ClearWatch(WatchHandlerId.Value);
         }
-
         private async void HandleWatchPositionReceived(object sender, GeolocationEventArgs e)
         {
             LastWatchPositionResult = e.GeolocationResult;
@@ -225,7 +246,10 @@ namespace HighFive.Pages
             }
             StateHasChanged();
         }
-
+        public GeolocationBase(string adressToSearch)
+        {
+            adressToSearch = adressToSearch;
+        }
         public async void Dispose()
         {
             if (isWatching)

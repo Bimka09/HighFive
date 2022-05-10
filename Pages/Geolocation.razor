@@ -1,29 +1,39 @@
 ﻿@page "/geolocation"
 @using HighFive.Data;
+@*@using Darnton.Blazor.Leaflet.LeafletMap*@
 @inherits GeolocationBase
 
 <h1>Geolocation</h1>
 
 <div class="my-3">
-    <h3>Current Position</h3>
-    <p class="my-0"><span class="font-weight-bold">Position </span> 
+    @*<h3>Current Position</h3>*@
+    <p class="my-0"><span class="font-weight-bold"></span> 
         @if(CurrentPositionResult?.Position is null)
         {
             <span>[unknown]</span>
         }
         else
         {
-            <span>Lat: @CurrentLatitude °, Long: @CurrentLongitude °</span>
+            <span>Ваш текущий адрес: @currentAdress</span>
         }
     </p>
-    <button class="btn btn-primary my-3" @onclick="GetRoute">Current Location</button>
+    <button class="btn btn-primary my-3" @onclick="ShowCurrentPosition">Получить организации по локации</button>
     @if (CurrentPositionResult?.Error != null)
     {
         <p class="bg-light text-danger">Error: @CurrentPositionResult.Error.Message</p>
     }
     @*<LeafletMap Map="PositionMap" TileLayer="PositionTileLayer" />*@
+    
+
 </div>
+    <button class="btn btn-primary my-3" @onclick="GetOrganizations">Получить организации по запросу</button>
+    <input @bind-value="adressToSearch" @bind-value:event="oninput" ></input>
+<div>
+
+</div>
+
 
 <div>
     <OrganizationsTable Organizations = "@foundOrganizations"/>
 </div>
+

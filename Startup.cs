@@ -1,5 +1,5 @@
-
 using Darnton.Blazor.DeviceInterop.Geolocation;
+using Fluxor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +22,11 @@ namespace HighFive
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IGeolocationService, GeolocationService>();
-            //services.AddSingleton<LocationService>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            
+            services.AddFluxor(x => x
+                .ScanAssemblies(typeof(Startup).Assembly)
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
