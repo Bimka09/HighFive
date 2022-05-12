@@ -8,7 +8,6 @@
 <h1>Geolocation</h1>
 
 <div class="my-3">
-    @*<h3>Current Position</h3>*@
     <p class="my-0"><span class="font-weight-bold"></span> 
         @if(CurrentPositionResult?.Position is null)
         {
@@ -24,16 +23,12 @@
     {
         <p class="bg-light text-danger">Error: @CurrentPositionResult.Error.Message</p>
     }
-    @*<LeafletMap Map="PositionMap" TileLayer="PositionTileLayer" />*@
-    
 
+    </div>
+        <button class="btn btn-primary my-3" @onclick="GetOrganizations">Получить организации по запросу</button>
+        <input @bind-value="adressToSearch" @bind-value:event="oninput" ></input>
+    <div>
 </div>
-    <button class="btn btn-primary my-3" @onclick="GetOrganizations">Получить организации по запросу</button>
-    <input @bind-value="adressToSearch" @bind-value:event="oninput" ></input>
-<div>
-
-</div>
-
 
 <div>
     <OrganizationsTable Organizations = "@foundOrganizations"/>

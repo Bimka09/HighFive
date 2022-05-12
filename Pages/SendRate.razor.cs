@@ -36,7 +36,6 @@ namespace HighFive.Pages
 
         public void SendUserInputAsync()
         {
-            Console.WriteLine("");
 
             var clientInput = new ClientInput()
             {
@@ -63,6 +62,8 @@ namespace HighFive.Pages
                 Console.WriteLine(ex.ToString());
                 status = "Ошибка при отправке запроса";
             }
+            StateHasChanged();
+            //sessionStorage.SetItemAsync("address", status);
         }
         protected virtual void Dispose(bool disposing)
         {

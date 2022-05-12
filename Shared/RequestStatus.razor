@@ -1,0 +1,15 @@
+﻿@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+<h3>RequestStatus</h3>
+
+<h5>@requestStatus</h5>
+
+@code {
+
+    public string requestStatus;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        requestStatus = await sessionStorage.GetItemAsync<string>("requestStatus");
+        StateHasChanged();
+    }
+}

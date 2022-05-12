@@ -2,6 +2,7 @@
 @*@using Microsoft.Extensions.Logging
 @inject ILogger<SendRateModel> Logger*@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IModalService modal
 @*@inject Blazored.LocalStorage.ISyncLocalStorageService sessionStorage*@
 
 <h3>Оценить</h3>
@@ -25,7 +26,6 @@
 </div>*@
 <h5>Организация: @orgName</h5>
 <h5>Адрес: @address</h5>
-
 <EditForm Model = "@RateModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -55,6 +55,18 @@
             <ValidationMessage For="() => RateModel.Rewiew"/>
         </div>
         <button type = "submit" class = "btn btn-primary" @onclick="RateModel.SendUserInputAsync">Submit</button>
+    <div class="my-3">
+    <p class="my-0"><span class="font-weight-bold"></span> 
+        @if(RateModel.status is null)
+        {
+            <span>[unknown]</span>
+        }
+        else
+        {
+            <span>@RateModel.status</span>
+        }
+    </p> 
+    </div>
 </EditForm>
 
 

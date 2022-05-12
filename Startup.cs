@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using Blazored.SessionStorage;
 using Darnton.Blazor.DeviceInterop.Geolocation;
 using Fluxor;
@@ -28,6 +29,7 @@ namespace HighFive
             services.AddServerSideBlazor();
             services.AddBlazoredLocalStorage();
             services.AddBlazoredSessionStorage();
+            services.AddBlazoredModal();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

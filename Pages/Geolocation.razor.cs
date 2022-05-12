@@ -23,32 +23,16 @@ using Fluxor;
 namespace HighFive.Pages
 {
     [FeatureState]
-    public class GeolocationBase : ComponentBase, IDisposable
+    public class GeolocationBase : ComponentBase
     {
         private readonly string _apiOrgSearch = "7b8614d5-54f5-44d6-ad37-032404b0c2d6";
         private readonly string _apiGeoCode = "ab4445ef-d950-4bfe-85a3-c44aa3c6ecdc";
         [Inject] public IGeolocationService GeolocationService { get; set; }
 
-        protected Map PositionMap;
-        protected TileLayer PositionTileLayer;
-        //Marker CurrentPositionMarker;
-
-        protected Map WatchMap;
-        protected TileLayer WatchTileLayer;
-        protected Polyline WatchPath;
-        protected List<Marker> WatchMarkers;
-
         protected GeolocationResult CurrentPositionResult { get; set; }
         protected string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString().Replace(",","."); //ToString("F2")
         protected string CurrentLongitude => CurrentPositionResult?.Position?.Coords?.Longitude.ToString().Replace(",",".");
         protected bool ShowCurrentPositionError => CurrentPositionResult?.Error != null;
-        private bool isWatching => WatchHandlerId.HasValue;
-        protected long? WatchHandlerId { get; set; }
-        protected GeolocationResult LastWatchPositionResult { get; set; }
-        protected string LastWatchLatitude => LastWatchPositionResult?.Position?.Coords?.Latitude.ToString("F2");
-        protected string LastWatchLongitude => LastWatchPositionResult?.Position?.Coords?.Longitude.ToString("F2");
-        protected string LastWatchTimestamp => LastWatchPositionResult?.Position?.DateTimeOffset.ToString();
-        protected string ToggleWatchCommand => isWatching ? "Stop watching" : "Start watching";
         public List<OrganizationInfo> foundOrganizations { get; set; }
         public string adressToSearch { get; set; }
         public string currentAdress { get; set; }
@@ -57,32 +41,6 @@ namespace HighFive.Pages
         public GeolocationBase() : base()
         {
             foundOrganizations = new List<OrganizationInfo>();
-            PositionMap = new Map("geolocationPointMap", new MapOptions //Centred on New Zealand
-            {
-                Center = new LatLng(-42, 175),
-                Zoom = 4
-            });
-            PositionTileLayer = new TileLayer(
-                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                new TileLayerOptions
-                {
-                    Attribution = @"Map data &copy; <a href=""https://www.openstreetmap.org/"">OpenStreetMap</a> contributors, " +
-                        @"<a href=""https://creativecommons.org/licenses/by-sa/2.0/"">CC-BY-SA</a>"
-                }
-            );
-            WatchMap = new Map("geolocationWatchMap", new MapOptions //Centred on New Zealand
-            {
-                Center = new LatLng(-42, 175),
-                Zoom = 4
-            });
-            WatchTileLayer = new TileLayer(
-                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                new TileLayerOptions
-                {
-                    Attribution = @"Map data &copy; <a href=""https://www.openstreetmap.org/"">OpenStreetMap</a> contributors, " +
-                        @"<a href=""https://creativecommons.org/licenses/by-sa/2.0/"">CC-BY-SA</a>"
-                }
-            );
         }
         public async void GetOrganizations()
         {
@@ -198,61 +156,6 @@ namespace HighFive.Pages
             }*/
             StateHasChanged();
         }
-        public async void TogglePositionWatch()
-        {
-            if (isWatching)
-            {
-                await StopWatching();
-                WatchHandlerId = null;
-                foreach (var marker in WatchMarkers)
-                {
-                    await marker.Remove();
-                }
-                WatchMarkers.Clear();
-                await WatchPath.Remove();
-                WatchPath = null;
-            }
-            else
-            {
-                GeolocationService.WatchPositionReceived += HandleWatchPositionReceived;
-                WatchHandlerId = await GeolocationService.WatchPosition();
-            }
-            StateHasChanged();
-        }
-        private async Task StopWatching()
-        {
-            GeolocationService.WatchPositionReceived -= HandleWatchPositionReceived;
-            await GeolocationService.ClearWatch(WatchHandlerId.Value);
-        }
-        private async void HandleWatchPositionReceived(object sender, GeolocationEventArgs e)
-        {
-            LastWatchPositionResult = e.GeolocationResult;
-            if (LastWatchPositionResult.IsSuccess)
-            {
-                var latlng = LastWatchPositionResult.Position.ToLeafletLatLng();
-                var marker = new Darnton.Blazor.Leaflet.LeafletMap.Marker(latlng, null);
-                if (WatchPath is null)
-                {
-                    WatchMarkers = new List<Darnton.Blazor.Leaflet.LeafletMap.Marker> { marker };
-                    WatchPath = new Polyline(WatchMarkers.Select(m => m.LatLng), new PolylineOptions());
-                    await WatchPath.AddTo(WatchMap);
-                }
-                else
-                {
-                    WatchMarkers.Add(marker);
-                    await WatchPath.AddLatLng(latlng);
-                }
-                await marker.AddTo(WatchMap);
-            }
-            StateHasChanged();
-        }
 
-        public async void Dispose()
-        {
-            if (isWatching)
-            {
-                await StopWatching();
-            }
-        }
     }
 }
