@@ -246,10 +246,7 @@ namespace HighFive.Pages
             }
             StateHasChanged();
         }
-        public GeolocationBase(string adressToSearch)
-        {
-            adressToSearch = adressToSearch;
-        }
+
         public async void Dispose()
         {
             if (isWatching)

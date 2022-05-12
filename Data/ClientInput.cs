@@ -8,6 +8,6 @@
         public string last_name { get; set; }
         public int rate { get; set; }
         public string rewiew { get; set; }
-        public string organization_id { get; set; }
+        public long organization_id { get; set; }
     }
 }

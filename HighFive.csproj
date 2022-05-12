@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Darnton.Blazor.DeviceInterop" Version="0.1.2" />
     <PackageReference Include="Darnton.Blazor.Leaflet" Version="0.1.3" />

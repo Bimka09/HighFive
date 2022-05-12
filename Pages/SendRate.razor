@@ -1,7 +1,8 @@
 ﻿@page "/sendrate"
 @*@using Microsoft.Extensions.Logging
 @inject ILogger<SendRateModel> Logger*@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@*@inject Blazored.LocalStorage.ISyncLocalStorageService sessionStorage*@
 
 <h3>Оценить</h3>
 @*<div>
@@ -22,36 +23,46 @@
 <div>
     <button class="btn btn-primary my-3" @onclick="SendUserInput">Отправить отзыв</button>
 </div>*@
-<h1>Адрес: @GeolocationBase.Value.adressToSearch</h1>
+<h5>Организация: @orgName</h5>
+<h5>Адрес: @address</h5>
 
 <EditForm Model = "@RateModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
         <div class = "form-group">
+            <label>Имя</label>
             <input placeholder = "Введите имя" @bind-value="RateModel.FirstName" @bind-value:event="oninput" paddi></input>
             <ValidationMessage For="() => RateModel.FirstName"/>
         </div>
         <div class="form-group">
+            <label>Фамилия</label>
             <input placeholder = "Введите фамилию" @bind-value="RateModel.LastName" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.LastName"/>
         </div>
         <div class = "form-group">
+            <label>Отчество</label>
             <input placeholder = "Введите отчество" @bind-value="RateModel.MiddleName" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.MiddleName"/>
         </div>
         <div class = "form-group">
-            <input placeholder = "Введите отчество" @bind-value="RateModel.Rate" @bind-value:event="oninput" ></input>
+            <label>Рейтинг</label>
+            <input placeholder = "Введите рейтинг" @bind-value="RateModel.Rate" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.Rate"/>
         </div>
         <div class = "form-group">
-            <input placeholder = "Введите отчество" @bind-value="RateModel.Rewiew" @bind-value:event="oninput" ></input>
+            <label>Отзыв</label>
+            <input placeholder = "Введите отзыв" @bind-value="RateModel.Rewiew" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.Rewiew"/>
         </div>
-        <button type = "submit" class = "btn btn-primary" @onclick="RateModel.SendUserInput">Submit</button>
+        <button type = "submit" class = "btn btn-primary" @onclick="RateModel.SendUserInputAsync">Submit</button>
 </EditForm>
+
 
 @code{
     public SendRateModel RateModel = new SendRateModel();
+    public string address;
+    public string orgName;
+    private bool isConnected;
 
     private void HandleValidSubmit()
     {
@@ -59,6 +70,32 @@
 
         // Process the valid form
     }
+
+
+    protected override async Task OnInitializedAsync()
+    { 
+        address = await sessionStorage.GetItemAsync<string>("address");
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadStateAsync()
+    {
+        address = await sessionStorage.GetItemAsync<string>("address");
+        orgName = await sessionStorage.GetItemAsync<string>("orgName");
+        RateModel.address = address;
+        RateModel.orgName = orgName;
+    }
+
 }
 
 <style>

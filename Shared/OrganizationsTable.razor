@@ -1,4 +1,5 @@
 ﻿@using HighFive.Data;
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <div class="table-responsive">
     <table class="table table-striped">
@@ -21,6 +22,7 @@
             }
             else
             {
+
                 @foreach(var org in Organizations)
                 {
                 <tr>
@@ -28,7 +30,7 @@
                     <td>@org.address</td>
                     <td>@org.url</td>
                     <a href="/sendrate">
-                    <span class="btn btn-primary my-3">Оценить</span>
+                    <span class="btn btn-primary my-3" @onclick="(() => SetAdress(org.address, org.name)) ">Оценить</span>
                     </a>
                 </tr>
                 }
@@ -42,4 +44,9 @@
     [Parameter]
     public List<OrganizationInfo> Organizations { get; set; }
 
+    public void SetAdress(string adress, string name)
+    {
+        sessionStorage.SetItemAsync("address", adress);
+        sessionStorage.SetItemAsync("orgName", name);
+    }
 }

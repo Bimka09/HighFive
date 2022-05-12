@@ -2,6 +2,7 @@
 {
     public class PlaceInfo
     {
+        public long id { get; set; }
         public string country_code { get; set; }
         public string country { get; set; }
         public string province { get; set; }
@@ -12,5 +13,7 @@
         public string postal_code { get; set; }
         public decimal latitude { get; set; }
         public decimal longitude { get; set; }
+        public string adress { get; set; }
+        public string name { get; set; }
     }
 }

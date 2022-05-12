@@ -1,3 +1,5 @@
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Darnton.Blazor.DeviceInterop.Geolocation;
 using Fluxor;
 using Microsoft.AspNetCore.Builder;
@@ -24,9 +26,8 @@ namespace HighFive
             services.AddScoped<IGeolocationService, GeolocationService>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddFluxor(x => x
-                .ScanAssemblies(typeof(Startup).Assembly)
-            );
+            services.AddBlazoredLocalStorage();
+            services.AddBlazoredSessionStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

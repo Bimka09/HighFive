@@ -2,6 +2,8 @@
 @using HighFive.Data;
 @*@using Darnton.Blazor.Leaflet.LeafletMap*@
 @inherits GeolocationBase
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@*@inject Blazored.LocalStorage.ILocalStorageService sessionStorage*@
 
 <h1>Geolocation</h1>
 
@@ -36,4 +38,3 @@
 <div>
     <OrganizationsTable Organizations = "@foundOrganizations"/>
 </div>
-
