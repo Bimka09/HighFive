@@ -53,8 +53,9 @@
             <label>Отзыв</label>
             <input placeholder = "Введите отзыв" @bind-value="RateModel.Rewiew" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.Rewiew"/>
+
         </div>
-        <button type = "submit" class = "btn btn-primary" @onclick="RateModel.SendUserInputAsync">Submit</button>
+        <button type = "submit" class = "btn btn-primary" >Submit</button>
     <div class="my-3">
     <p class="my-0"><span class="font-weight-bold"></span> 
         @if(RateModel.status is null)
@@ -78,17 +79,15 @@
 
     private void HandleValidSubmit()
     {
-        //Logger.LogInformation("HandleValidSubmit called");
-
-        // Process the valid form
+        RateModel.SendUserInput();
     }
 
 
-    protected override async Task OnInitializedAsync()
-    { 
-        address = await sessionStorage.GetItemAsync<string>("address");
-        StateHasChanged();
-    }
+    //protected override async Task OnInitializedAsync()
+    //{ 
+    //    address = await sessionStorage.GetItemAsync<string>("address");
+    //    StateHasChanged();
+    //}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
