@@ -28,10 +28,9 @@
 <h5>Адрес: @address</h5>
 <EditForm Model = "@RateModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
         <div class = "form-group">
             <label>Имя</label>
-            <input placeholder = "Введите имя" @bind-value="RateModel.FirstName" @bind-value:event="oninput" paddi></input>
+            <input placeholder = "Введите имя" @bind-value="RateModel.FirstName" @bind-value:event="oninput" ></input>
             <ValidationMessage For="() => RateModel.FirstName"/>
         </div>
         <div class="form-group">

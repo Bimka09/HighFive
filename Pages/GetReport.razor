@@ -1,0 +1,44 @@
+﻿@page "/getreport"
+
+<h3>GetReport</h3>
+
+<EditForm Model = "@GetReportModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    @*<input type="checkbox" id="addition" name="math" value="add"  />
+    <label for="addition">Addition</label>*@
+        <div class = "form-group">
+            <label>Почта</label>
+            <input placeholder = "Введите адрес почты" @bind-value="GetReportModel.adressMail" @bind-value:event="oninput" ></input>
+            <ValidationMessage For="() => GetReportModel.adressMail"/>
+        </div>
+    <button type = "submit" class = "btn btn-primary" >Submit</button>
+
+       
+    <div class="my-3">
+    <p class="my-0"><span class="font-weight-bold"></span> 
+        @if(GetReportModel.status is null)
+        {
+            <span></span>
+        }
+        else
+        {
+            <span>@GetReportModel.status</span>
+        }
+    </p> 
+    </div>
+</EditForm>
+
+@code {
+    public GetReportModel GetReportModel = new GetReportModel();
+
+    private void HandleValidSubmit()
+    {
+        GetReportModel.SendMessage();
+    }
+}
+
+<style>
+    .form-group{
+        width: 200px;
+    }
+</style>

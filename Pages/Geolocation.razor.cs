@@ -67,7 +67,7 @@ namespace HighFive.Pages
         private async void GetCurrentPlaceOrganizations()
         {
             foundOrganizations.Clear();
-            var url = @"https://search-maps.yandex.ru/v1/?text=" + CurrentLongitude + "," + CurrentLatitude + "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch;
+            var url = @"https://search-maps.yandex.ru/v1/?text="+ currentAdress +  "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch; //CurrentLongitude + "," + CurrentLatitude +
             using var client = new HttpClient();
             var result = await client.GetStringAsync(url);
 
@@ -86,7 +86,7 @@ namespace HighFive.Pages
                 StateHasChanged();
             }
         }
-        private void GetAdress()
+        private async Task GetAdress()
         {
             var palceInfo = new PlaceInfo();
             string url = @"https://geocode-maps.yandex.ru/1.x/?apikey=" + _apiGeoCode + "&geocode=" + CurrentLongitude + "," + CurrentLatitude;
@@ -145,8 +145,9 @@ namespace HighFive.Pages
                 await CurrentPositionMarker.Remove();
             }*/
             CurrentPositionResult = await GeolocationService.GetCurrentPosition();
+            await GetAdress();
             GetCurrentPlaceOrganizations();
-            GetAdress();
+            
             /*if (CurrentPositionResult.IsSuccess)
             {
                 CurrentPositionMarker = new Marker(

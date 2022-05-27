@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+
 namespace HighFive
 {
     public class Startup
@@ -25,6 +26,7 @@ namespace HighFive
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IGeolocationService, GeolocationService>();
+            //services.AddScoped<IRabbitMqService, RabbitMqService>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredLocalStorage();

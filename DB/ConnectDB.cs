@@ -93,22 +93,24 @@ namespace HighFive.DB
 
             if (rateExists == null)
             {
-                query = @"insert into ratings (client_id, organization_id, rate)
-                            values (@client_id, @organization_id, @rate)";
+                query = @"insert into ratings (client_id, organization_id, rate, rewiew)
+                            values (@client_id, @organization_id, @rate, @rewiew)";
 
                 _dbConnection.Execute(query, new
                 {
                     client_id = data.id,
                     organization_id = data.organization_id,
-                    rate = data.rate
-                });
+                    rate = data.rate,
+                    rewiew = data.rewiew
+                }) ;
             }
             else
             {
-                query = @"update ratings set rate = @rate where id = @id";
+                query = @"update ratings set rate = @rate, rewiew = @rewiew where id = @id";
                 _dbConnection.Execute(query, new
                 {
                     rate = data.rate,
+                    rewiew = data.rewiew,
                     id = rateExists.id
                 });
             }
