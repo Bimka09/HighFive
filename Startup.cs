@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using HighFive.RabbitMQ;
 
 
 namespace HighFive
@@ -26,7 +27,7 @@ namespace HighFive
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IGeolocationService, GeolocationService>();
-            //services.AddScoped<IRabbitMqService, RabbitMqService>();
+            services.AddScoped<IRabbitMQSender, RabbitMQSender>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredLocalStorage();
