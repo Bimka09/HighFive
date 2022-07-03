@@ -2,7 +2,6 @@
 using HighFive.Data;
 using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -125,9 +124,9 @@ namespace HighFive.DB
             {
                 if (disposing)
                 {
-                    _dbConnection.Close();// Освобождаем управляемые ресурсы
+                    _dbConnection.Close();
                 }
-                // освобождаем неуправляемые объекты
+
                 disposed = true;
             }
         }

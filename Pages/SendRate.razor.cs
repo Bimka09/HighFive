@@ -4,7 +4,6 @@ using HighFive.DB;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace HighFive.Pages
 {
@@ -62,8 +61,7 @@ namespace HighFive.Pages
                 Console.WriteLine(ex.ToString());
                 status = "Ошибка при отправке запроса";
             }
-            //StateHasChanged();
-            //sessionStorage.SetItemAsync("address", status);
+
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -71,9 +69,9 @@ namespace HighFive.Pages
             {
                 if (disposing)
                 {
-                    ConnectDB.Dispose();// Освобождаем управляемые ресурсы
+                    ConnectDB.Dispose();
                 }
-                // освобождаем неуправляемые объекты
+
                 disposed = true;
             }
         }
