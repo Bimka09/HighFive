@@ -8,12 +8,12 @@ using Newtonsoft.Json.Linq;
 using System.Xml;
 using HighFive.Data;
 using Newtonsoft.Json;
-using Fluxor;
+
 
 
 namespace HighFive.Pages
 {
-    [FeatureState]
+
     public class GeolocationBase : ComponentBase
     {
         private readonly string _apiOrgSearch = "7b8614d5-54f5-44d6-ad37-032404b0c2d6";
@@ -21,8 +21,8 @@ namespace HighFive.Pages
         [Inject] public IGeolocationService GeolocationService { get; set; }
 
         protected GeolocationResult CurrentPositionResult { get; set; }
-        protected string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString().Replace(",","."); //ToString("F2")
-        protected string CurrentLongitude => CurrentPositionResult?.Position?.Coords?.Longitude.ToString().Replace(",",".");
+        protected string CurrentLatitude => CurrentPositionResult?.Position?.Coords?.Latitude.ToString().Replace(",", "."); //ToString("F2")
+        protected string CurrentLongitude => CurrentPositionResult?.Position?.Coords?.Longitude.ToString().Replace(",", ".");
         protected bool ShowCurrentPositionError => CurrentPositionResult?.Error != null;
         public List<OrganizationInfo> foundOrganizations { get; set; }
         public string adressToSearch { get; set; }
@@ -58,7 +58,7 @@ namespace HighFive.Pages
         private async void GetCurrentPlaceOrganizations()
         {
             foundOrganizations.Clear();
-            var url = @"https://search-maps.yandex.ru/v1/?text="+ currentAdress +  "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch; //CurrentLongitude + "," + CurrentLatitude +
+            var url = @"https://search-maps.yandex.ru/v1/?text=" + currentAdress + "&type=biz&lang=ru_RU&apikey=" + _apiOrgSearch; //CurrentLongitude + "," + CurrentLatitude +
             using var client = new HttpClient();
             var result = await client.GetStringAsync(url);
 
@@ -88,7 +88,7 @@ namespace HighFive.Pages
             {
                 currentAdress = xRoot.ChildNodes[0].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
                 var adressInfo = xRoot.ChildNodes[0].ChildNodes[1].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[3];
-                foreach(XmlNode childnode in adressInfo.ChildNodes)
+                foreach (XmlNode childnode in adressInfo.ChildNodes)
                 {
                     palceInfo = AnalyzeXMLPlaceInfo(childnode, palceInfo);
                 }
@@ -135,7 +135,7 @@ namespace HighFive.Pages
             CurrentPositionResult = await GeolocationService.GetCurrentPosition();
             await GetAdress();
             GetCurrentPlaceOrganizations();
-            
+
             StateHasChanged();
         }
 

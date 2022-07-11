@@ -8,7 +8,7 @@
     <label for="addition">Addition</label>*@
         <div class = "form-group">
             <label>Почта</label>
-            <input placeholder = "Введите адрес почты" @bind-value="GetReportModel.adressMail" @bind-value:event="oninput" ></input>
+            <input placeholder = "Введите адрес почты" @bind-value="GetReportModel.adressMail" @bind-value:event="oninput" >
             <ValidationMessage For="() => GetReportModel.adressMail"/>
         </div>
     <button type = "submit" class = "btn btn-primary" >Submit</button>
