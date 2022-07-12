@@ -21,7 +21,8 @@ namespace HighFive.Pages
 			try
 			{
 				status = "";
-				mQSender.Send(adressMail);
+				var sender = new RabbitMQSender();
+				sender.Send(adressMail);
 				status = "Запрос на получение отчета отправлен";
 			}
 			catch

@@ -9,6 +9,7 @@ namespace HighFive.Pages
 {
     public class SendRateModel : ComponentBase, IDisposable
     {
+
         [Required(ErrorMessage = "Обязательное поле")]
         public string FirstName { get; set; }
         [Required(ErrorMessage = "Обязательное поле")]
